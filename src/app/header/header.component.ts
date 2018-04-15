@@ -4,25 +4,29 @@ import {Subscription} from 'rxjs/Subscription';
 import {RecipeService} from '../recipes/recipe.service';
 import {Recipe} from '../recipes/recipe.model';
 import {AuthService} from '../auth/auth.service';
+import {ShoppingListService} from '../shopping-list/shopping-list.service';
+import {Ingredient} from '../shared/ingredients.model';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html'
 })
 export class HeaderComponent implements OnDestroy {
-  Subscription: Subscription;
+  subscription: Subscription;
   constructor (private dataStorageService: DataStorageService,
                private recipeService: RecipeService,
+               private shoppingListService: ShoppingListService,
                private authService: AuthService) {}
   onSaveServers() {
-    this.Subscription = this.dataStorageService.storeRecipes().subscribe(
+    this.subscription = this.dataStorageService.setRecipesBook().subscribe(
       (response) => { console.log(response); },
       (error) => { console.log(error); }
     );
   }
   onGetServers() {
-    this.Subscription = this.dataStorageService.getRecipes().subscribe(
+    this.subscription = this.dataStorageService.getRecipesBook().subscribe(
       (response) => {
-        this.recipeService.saveRecipes(<Recipe[]>response);
+        this.recipeService.saveRecipes(<Recipe[]>response[0]);
+        this.shoppingListService.setIngredients(<Ingredient[]>response[1])
         },
       (error) => { console.log(error); }
     )
@@ -31,7 +35,7 @@ export class HeaderComponent implements OnDestroy {
     this.authService.signOutUser();
   }
   ngOnDestroy () {
-    this.Subscription.unsubscribe()
+    this.subscription.unsubscribe()
   }
 }
 

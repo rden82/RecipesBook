@@ -5,37 +5,37 @@ import 'rxjs/add/operator/map';
 import {Recipe} from '../recipes/recipe.model';
 import {AuthService} from '../auth/auth.service';
 import {Router} from '@angular/router';
+import {ShoppingListService} from '../shopping-list/shopping-list.service';
+import {Ingredient} from './ingredients.model';
 
 @Injectable()
 export class DataStorageService {
-  urlDataBase = 'https://ng-recipe-book-63d1a.firebaseio.com/racipes.json';
+  urlDataBase = 'https://ng-recipe-book-63d1a.firebaseio.com/recipes.json';
 
   constructor (private httpClient: HttpClient,
                private recipeService: RecipeService,
+               private shoppingListService: ShoppingListService,
                private authService: AuthService,
-               private roter: Router) {
+               private router: Router) {
     }
-  storeRecipes() {
+  RecipeBooks() {
+    return [this.recipeService.getRecipes(), this.shoppingListService.getIngredients()]
+  }
+  setRecipesBook() {
     const token = this.authService.getToken();
     if (token) {
-      return this.httpClient.put(this.urlDataBase + '?auth=' + token, this.recipeService.getRecipes());
+      return this.httpClient.put(this.urlDataBase + '?auth=' + token, this.RecipeBooks());
     } else {
-      this.roter.navigate(['/signin']);
+      this.router.navigate(['/signin']);
     }
   }
-  getRecipes() {
+  getRecipesBook() {
     const token = this.authService.getToken();
     return this.httpClient.get(this.urlDataBase + '?auth=' + token)
       .map(
         (response) => {
-          const recipes: Recipe[]  = <Recipe[]>response;
-          for (let recipe of recipes) {
-            if (!recipe['ingredients']) {
-              recipe['ingredients'] = [];
-              console.log(recipe) ;
-            }
-          }
-          return recipes;
+          const book  = response;
+          return book;
         }
       );
   }
