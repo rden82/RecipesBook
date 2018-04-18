@@ -13,6 +13,7 @@ export class RecipeEditComponent implements OnInit {
   id: number;
   editMode = false;
   recipeForm: FormGroup;
+  ingredientsArray = [];
 
   constructor(private route: ActivatedRoute,
               private recipeService: RecipeService,
@@ -73,6 +74,7 @@ export class RecipeEditComponent implements OnInit {
       recipeDescription = recipe.description;
       if (recipe['ingredients']) {
         for  (let ingredient of recipe.ingredients) {
+          this.ingredientsArray.push(ingredient);
           recipeIngredients.push(
             new FormGroup({
               'name': new FormControl(ingredient.name, Validators.required),

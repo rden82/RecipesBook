@@ -1,17 +1,16 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams, HttpRequest} from '@angular/common/http';
 import {RecipeService} from '../recipes/recipe.service';
 import 'rxjs/add/operator/map';
-import {Recipe} from '../recipes/recipe.model';
 import {AuthService} from '../auth/auth.service';
 import {Router} from '@angular/router';
 import {ShoppingListService} from '../shopping-list/shopping-list.service';
-import {Ingredient} from './ingredients.model';
+
 
 @Injectable()
 export class DataStorageService {
   urlDataBase = 'https://ng-recipe-book-63d1a.firebaseio.com/recipes.json';
-
+  test = null;
   constructor (private httpClient: HttpClient,
                private recipeService: RecipeService,
                private shoppingListService: ShoppingListService,
@@ -21,21 +20,28 @@ export class DataStorageService {
   RecipeBooks() {
     return [this.recipeService.getRecipes(), this.shoppingListService.getIngredients()]
   }
-  setRecipesBook() {
-    const token = this.authService.getToken();
-    if (token) {
-      return this.httpClient.put(this.urlDataBase + '?auth=' + token, this.RecipeBooks());
-    } else {
-      this.router.navigate(['/signin']);
-    }
-  }
+   setRecipesBook() {
+  //   if (token) {
+  //     return this.httpClient.put(this.urlDataBase + '?auth=' + token, this.RecipeBooks(), {
+  //       observe: 'body',
+  //       headers: new HttpHeaders().set('Authorization', 'sdfsdfsdfsdf')
+  //     });
+  //   } else {
+  //     this.router.navigate(['/signin']);
+  //   }
+     const req = new HttpRequest('PUT', this.urlDataBase,
+       this.RecipeBooks(),{reportProgress: true});
+     return this.httpClient.request(req)
+   }
   getRecipesBook() {
-    const token = this.authService.getToken();
-    return this.httpClient.get(this.urlDataBase + '?auth=' + token)
+    return this.httpClient.get(this.urlDataBase, {
+      observe: 'body',
+      headers: new HttpHeaders().set('Authorization', 'Beare sfsdfsdf'),
+      responseType: 'json'
+    })
       .map(
-        (response) => {
-          const book  = response;
-          return book;
+        (body) => {
+          return body;
         }
       );
   }

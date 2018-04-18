@@ -44,9 +44,11 @@ export class AuthService {
     this.router.navigate(['/']);
   }
   getToken() {
-    firebase.auth().currentUser.getToken().then(
-      token => this.token = token
-    );
+    if (this.userEmail != '') {
+      firebase.auth().currentUser.getToken().then(
+        token => this.token = token
+      );
+    }
     return this.token;
   }
   isAuthenticated() {

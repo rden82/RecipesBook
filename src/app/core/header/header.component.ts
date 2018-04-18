@@ -1,21 +1,24 @@
-import {Component, OnDestroy} from '@angular/core';
-import {DataStorageService} from '../shared/data-storage.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {DataStorageService} from '../../shared/data-storage.service';
 import {Subscription} from 'rxjs/Subscription';
-import {RecipeService} from '../recipes/recipe.service';
-import {Recipe} from '../recipes/recipe.model';
-import {AuthService} from '../auth/auth.service';
-import {ShoppingListService} from '../shopping-list/shopping-list.service';
-import {Ingredient} from '../shared/ingredients.model';
+import {RecipeService} from '../../recipes/recipe.service';
+import {Recipe} from '../../recipes/recipe.model';
+import {AuthService} from '../../auth/auth.service';
+import {ShoppingListService} from '../../shopping-list/shopping-list.service';
+import {Ingredient} from '../../shared/ingredients.model';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html'
 })
-export class HeaderComponent implements OnDestroy {
+export class HeaderComponent implements OnDestroy, OnInit {
   subscription: Subscription;
+  userEmail = '';
   constructor (private dataStorageService: DataStorageService,
                private recipeService: RecipeService,
                private shoppingListService: ShoppingListService,
                private authService: AuthService) {}
+  ngOnInit () {
+  }
   onSaveServers() {
     this.subscription = this.dataStorageService.setRecipesBook().subscribe(
       (response) => { console.log(response); },
@@ -36,6 +39,10 @@ export class HeaderComponent implements OnDestroy {
   }
   ngOnDestroy () {
     this.subscription.unsubscribe()
+  }
+  isAuthenticated() {
+    this.userEmail = this.authService.userEmail;
+    return this.authService.isAuthenticated()
   }
 }
 

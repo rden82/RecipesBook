@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
-import {HomeComponent} from './home/home.component';
+import {HomeComponent} from './core/home/home.component';
 import {AuthGuard} from './auth/auth-guard.service';
 
 const appRoutes: Routes = [
@@ -10,7 +10,7 @@ const appRoutes: Routes = [
   {path: 'shopping-list', loadChildren: './shopping-list/shopping-list.module#ShoppingListModule', canLoad: [AuthGuard]}
 ];
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes)],
+  imports: [RouterModule.forRoot(appRoutes, {preloadingStrategy: PreloadAllModules})],
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
